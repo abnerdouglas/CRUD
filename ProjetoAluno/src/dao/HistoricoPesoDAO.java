@@ -1,6 +1,7 @@
 package dao;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -95,8 +96,9 @@ private Connection connection;
         return new RegistroPeso(cpfAluno, data, peso);
     }
     
-    public void calcularIMC(RegistroPeso registroPeso, Aluno aluno) {
-        double altura = aluno.getAltura();
+    public String calcularIMC(RegistroPeso registroPeso, Aluno aluno) {
+              
+    	double altura = aluno.getAltura();
         double peso = registroPeso.getPeso();
         LocalDate dataCalculo = registroPeso.getData();
         double imc = peso / (altura * altura);
@@ -105,7 +107,8 @@ private Connection connection;
         String dadosIMC = String.format("Data do cálculo: %s%nCPF: %s%nNome: %s%nIMC: %.2f%nInterpretação: %s%n%n",
         		dataCalculo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), aluno.getCpf(), aluno.getNome(), imc, interpretacao);
 
-        escreverArquivo(dadosIMC);
+         String file = escreverArquivo(aluno.getNome(), dadosIMC);
+         return file;
     }
 
     private String interpretarIMC(double imc) {
@@ -121,16 +124,16 @@ private Connection connection;
         }
     }
 
-    private void escreverArquivo(String dadosIMC) {
-        String nomeArquivo = "registroIMC.txt";
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo, true))) {
+    private String escreverArquivo(String nome , String dadosIMC) {       
+    	
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Registros/" + nome + ".txt", true))) {
             writer.write(dadosIMC);
-            writer.newLine();
+            writer.newLine();            
         } catch (IOException e) {
             e.printStackTrace();
             // Tratar a exceção
         }
+        return "Registros/" + nome + ".txt";
     }
 	
 }

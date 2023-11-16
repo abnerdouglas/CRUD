@@ -161,7 +161,8 @@ public class HistoricoPesoGUI {
     }
     
     private void calcularIMC() {
-       
+    	
+    	String nomeArquivo;
         String cpf = cpfField.getText();
         LocalDate data = LocalDate.parse(dataField.getText());
         double peso = Double.parseDouble(pesoField.getText());
@@ -170,10 +171,10 @@ public class HistoricoPesoGUI {
         Aluno aluno = alunoDAO.obterAlunoPorCPF(cpf); 
 
         RegistroPeso registroPeso = new RegistroPeso(cpf, data, peso);
-        historicoPesoDAO.calcularIMC(registroPeso, aluno);
+        nomeArquivo = historicoPesoDAO.calcularIMC(registroPeso, aluno);
         
         try {
-            File file = new File("registroIMC.txt");
+            File file = new File(nomeArquivo);
             Desktop desktop = Desktop.getDesktop();
             desktop.open(file);
         } catch (IOException e) { 
