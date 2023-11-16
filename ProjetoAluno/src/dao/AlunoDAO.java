@@ -58,14 +58,14 @@ public class AlunoDAO {
     public void atualizar(Aluno aluno) {
         try {
             String query = "UPDATE aluno SET nome = ?, dataNascimento = ?, peso = ?, altura = ? WHERE cpf = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, aluno.getNome());
-                preparedStatement.setDate(2, java.sql.Date.valueOf(aluno.getDataNascimento()));
-                preparedStatement.setDouble(3, aluno.getPeso());
-                preparedStatement.setDouble(4, aluno.getAltura());
-                preparedStatement.setString(5, aluno.getCpf());
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, aluno.getNome());
+                stmt.setDate(2, java.sql.Date.valueOf(aluno.getDataNascimento()));
+                stmt.setDouble(3, aluno.getPeso());
+                stmt.setDouble(4, aluno.getAltura());
+                stmt.setString(5, aluno.getCpf());
 
-                int rowsUpdated = preparedStatement.executeUpdate();
+                int rowsUpdated = stmt.executeUpdate();
                 
             } 
         } catch (SQLException e) {
@@ -77,9 +77,9 @@ public class AlunoDAO {
     public void excluir(String cpf) {
         try {
             String query = "DELETE FROM aluno WHERE cpf = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, cpf);
-                preparedStatement.execute();
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, cpf);
+                stmt.execute();
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao excluir aluno.", e);

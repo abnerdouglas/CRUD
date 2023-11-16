@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class HistoricoPesoGUI {
@@ -37,22 +38,26 @@ public class HistoricoPesoGUI {
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel panel = new JPanel(new GridLayout(3, 2));
+        JPanel panel = new JPanel(new GridLayout(6, 2));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-
-        panel.add(new JLabel("CPF do Aluno:"));
         cpfField = new JTextField();
-        panel.add(cpfField);
-
-        panel.add(new JLabel("Data (AAAA-MM-DD):"));
         dataField = new JTextField();
-        panel.add(dataField);
-
-        panel.add(new JLabel("Peso:"));
         pesoField = new JTextField();
-        panel.add(pesoField);
+        
+        JPanel textFieldPanel = new JPanel(new GridLayout(3, 2, 5, 5)); // GridLayout para os campos de texto
+        textFieldPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); // Margem à esquerda
+
+        textFieldPanel.add(new JLabel("CPF do Aluno:", SwingConstants.LEFT));
+        textFieldPanel.add(cpfField);
+
+        textFieldPanel.add(new JLabel("Data (DD/MM/AAAA):", SwingConstants.LEFT));
+        textFieldPanel.add(dataField);
+
+        textFieldPanel.add(new JLabel("Peso:", SwingConstants.LEFT));
+        textFieldPanel.add(pesoField);
+
 
         JButton addButton = new JButton("Adicionar");
         addButton.addActionListener(new ActionListener() {
@@ -108,28 +113,37 @@ public class HistoricoPesoGUI {
             }
         });
 
-        panel.add(addButton);
-        panel.add(updateButton);
-        panel.add(deleteButton);
-        panel.add(consultarButton);
-        panel.add(calcularIMCButton);
-        panel.add(backButton);
+       
         
         // Tabela para exibir os registros
         String[] columns = {"CPF do Aluno", "Data", "Peso"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
-        
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        buttonPanel.add(addButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(consultarButton);
+        buttonPanel.add(calcularIMCButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(backButton);
+
+        // Adicionando o painel das caixas de texto, dos botões, e da tabela ao painel principal
+        panel.add(textFieldPanel);
+        panel.add(buttonPanel);
         panel.add(scrollPane);
 
         frame.getContentPane().add(panel);
         frame.setVisible(true);
+
     }
 
     private void adicionarRegistro() {
         String cpf = cpfField.getText();
-        LocalDate data = LocalDate.parse(dataField.getText());
+        String dataTexto = dataField.getText();
+		LocalDate data = LocalDate.parse(dataTexto,
+		DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         double peso = Double.parseDouble(pesoField.getText());
 
         historicoPesoDAO.adicionar(new RegistroPeso(cpf, data, peso));
@@ -138,10 +152,13 @@ public class HistoricoPesoGUI {
 
     private void atualizarRegistro() {
     	String cpf = cpfField.getText();
-        LocalDate data = LocalDate.parse(dataField.getText());
+    	String dataTexto = dataField.getText();
+		LocalDate data = LocalDate.parse(dataTexto,
+		DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         double peso = Double.parseDouble(pesoField.getText());
 
         historicoPesoDAO.atualizar(new RegistroPeso(cpf, data, peso));
+        JOptionPane.showMessageDialog(frame, "Registro de peso atualizado com sucesso!");
     }
 
     private void excluirRegistro() {
@@ -164,7 +181,9 @@ public class HistoricoPesoGUI {
     	
     	String nomeArquivo;
         String cpf = cpfField.getText();
-        LocalDate data = LocalDate.parse(dataField.getText());
+        String dataTexto = dataField.getText();
+		LocalDate data = LocalDate.parse(dataTexto,
+		DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         double peso = Double.parseDouble(pesoField.getText());
         
         // Obter as informações do aluno a partir do CPF

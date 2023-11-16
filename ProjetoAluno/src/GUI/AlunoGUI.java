@@ -74,26 +74,17 @@ public class AlunoGUI {
 					JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos.");
 				} else {
 
-					Aluno aluno = new Aluno(null, null, null, 0, 0);
-					aluno.setNome(nomeField.getText());
-					aluno.setCpf(cpfField.getText());
-
+					String nome = nomeField.getText();
 					String dataNascimentoTexto = dataNascimentoField.getText();
 					LocalDate dataNascimento = LocalDate.parse(dataNascimentoTexto,
-							DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-					aluno.setDataNascimento(dataNascimento);
+					DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+					double peso = Double.parseDouble(pesoField.getText());
+					double altura = Double.parseDouble(alturaField.getText());
+					String cpf = cpfField.getText();
 
-					String pesoTexto = pesoField.getText();
-					double peso = Double.parseDouble(pesoTexto);
-					aluno.setPeso(peso);
+					Aluno aluno = new Aluno(nome, cpf, dataNascimento, peso, altura);
 
-					String alturaTexto = alturaField.getText();
-					double altura = Double.parseDouble(alturaTexto);
-					aluno.setAltura(altura);
-
-					AlunoDAO dao = new AlunoDAO();
-
-					dao.adicionar(aluno);
+					alunoDAO.adicionar(aluno);
 					JOptionPane.showMessageDialog(null, "Aluno " + nomeField.getText() + " inserido com sucesso! ");
 				}
 			}
@@ -163,8 +154,8 @@ public class AlunoGUI {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
-        buttonPanel.add(viewAllButton);
         buttonPanel.add(updateButton);
+        buttonPanel.add(viewAllButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(limpaTela);
         buttonPanel.add(historicoPeso);
@@ -173,6 +164,7 @@ public class AlunoGUI {
 
         tablePanel = new JPanel(new BorderLayout());
         frame.add(tablePanel, BorderLayout.CENTER);
+        tablePanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
 
         frame.setVisible(true);
     }
